@@ -40,6 +40,8 @@ use Illuminate\Support\Facades\Auth;
 use App\Admin\Extensions\Nav\Shortcut;
 use App\Admin\Extensions\Nav\Dropdown;
 
+// 2FA DISABLED - commented out for now
+/*
 if (isset($_SERVER['REQUEST_URI'])) {
     $explode = explode('/', $_SERVER['REQUEST_URI']);
     if (in_array('logout', $explode)) {
@@ -96,8 +98,6 @@ if (!in_array('logout', $explode)) {
         }
 
         if ($u->code_verified != 'Yes') {
-            /* $u->code_verified = 'Yes';
-            $u->save(); */
             $pending_url = url('2fa');
             die("<script>location.href='$pending_url';</script>");
             return;
@@ -110,6 +110,7 @@ if (!in_array('logout', $explode)) {
         }
     }
 }
+*/
 
 
 

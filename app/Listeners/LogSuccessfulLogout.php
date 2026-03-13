@@ -24,7 +24,6 @@ class LogSuccessfulLogout
      */
     public function handle(Logout $event)
     {
-        die('time to log out');
-        // Do your logic
+        // Do your logic here if needed
     }
 }

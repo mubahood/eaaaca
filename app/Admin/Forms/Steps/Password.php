@@ -23,7 +23,6 @@ class Password extends StepForm
      */
     public function handle(Request $request)
     {
-        dd("done!");
         return $this->next($request->all());
     }
 

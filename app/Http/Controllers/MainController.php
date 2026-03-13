@@ -87,7 +87,7 @@ class MainController extends BaseController
   {
     $p = Event::find(1);
     if ($p == null) {
-      die("Post not found.");
+      abort(404, "Event not found.");
     }
     return view('dinner', [
       'd' => $p
@@ -98,7 +98,7 @@ class MainController extends BaseController
   {
     $p = NewsPost::find($r->id);
     if ($p == null) {
-      die("Post not found.");
+      abort(404, "Post not found.");
     }
 
     $posts = [];

@@ -119,35 +119,33 @@ class AuthController extends Controller
                 ->withInput();
         }
 
+        // Try email
         if ($this->guard()->attempt([
             'email' => $request->username,
             'password' => $request->password,
         ], true)) {
-            if ($this->guard()->attempt([
-                'username' => $request->username,
-                'password' => $request->password,
-            ], true)) {
-                if ($this->guard()->attempt([
-                    'phone_number_1' => $request->username,
-                    'password' => $request->password,
-                ], true)) {
-                    return $this->sendLoginResponse($request);
-                }
-            }
+            return $this->sendLoginResponse($request);
         }
 
-        return back()
-            ->withErrors(['password' => 'Wrong credentials.'])
-            ->withInput();
-
-
-
+        // Try username
         if ($this->guard()->attempt([
-            'email' => 'mubs0x@gmail.com',
-            'password' => '4321',
+            'username' => $request->username,
+            'password' => $request->password,
         ], true)) {
             return $this->sendLoginResponse($request);
         }
+
+        // Try phone number
+        if ($this->guard()->attempt([
+            'phone_number_1' => $request->username,
+            'password' => $request->password,
+        ], true)) {
+            return $this->sendLoginResponse($request);
+        }
+
+        return back()
+            ->withErrors(['username' => 'Invalid credentials. Please check your username and password.'])
+            ->withInput();
 
 
         $r = $request;
@@ -291,15 +289,6 @@ class AuthController extends Controller
      */
     public function getLogout(Request $request)
     {
-        $u = Admin::user();
-        if($u != null){
-            $u = User::find($u->id);
-            $u->code_sent = 'No';
-            $u->code = '';
-            $u->code_verified = 'No';
-            $u->save();
-        }
- 
         $this->guard()->logout();
 
         $request->session()->invalidate();

@@ -51,7 +51,7 @@ class Task extends Model
             $model->manager_id = $assigned_to_user->manager_id;
         }
         $model->project_id = $project_section->project_id;
-
+        return $model;
     }
 
 
