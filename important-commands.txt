@@ -1,0 +1,11 @@
+php artisan migrate
+
+php artisan make:migration create_courses_table
+
+php artisan make:migration add_to_some_cols_modinformation_requests --table=information_requests
+ 
+php artisan admin:make NotificationController --model=App\\Models\\Notification
+
+php artisan make:model DiscussionBoardPostComment -m
+php artisan make:model InformationRequestReponse -m
+news_post_category_id
