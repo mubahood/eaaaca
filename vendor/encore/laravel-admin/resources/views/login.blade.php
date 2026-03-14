@@ -334,7 +334,7 @@
                 <div class="login-panel-logo">
                     <img src="{{ url('public/assets/images/arinea.jpeg') }}" alt="ARINEA">
                 </div>
-                <div class="login-panel-title">Secure Information Exchange Platform</div>
+                <div class="login-panel-title">Welcome to the ARINEA Information Exchange Platform</div>
                 <div class="login-panel-divider"></div>
                 <div class="login-panel-subtitle">A centralised platform for managing cases, projects, and inter-agency information exchange across member states.</div>
             </div>
@@ -349,7 +349,7 @@
             <div class="login-card">
 
                 <div class="login-card-header">
-                    <h1>Sign in to your account</h1>
+                    <h1>Welcome to the ARINEA Information Exchange Platform</h1>
                     <p>Enter your credentials to access the platform.</p>
                 </div>
 
