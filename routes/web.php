@@ -1,13 +1,8 @@
 <?php
 
-use App\Http\Controllers\AccountController;
 use App\Http\Controllers\MainController;
-use App\Http\Middleware\Authenticate;
-use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Controllers\TwoFactorController;
 use App\Models\Gen;
-use App\Models\User;
-use App\Models\Utils;
-use Encore\Admin\Facades\Admin;
 use Illuminate\Support\Facades\Route;
 
 
@@ -15,58 +10,12 @@ Route::get('policy', function () {
     return view('policy');
 });
 
-Route::get('/resend-code', function () {
-    $u = Admin::user();
-    if ($u != null) {
-        $u = User::find($u->id);
-        $receiver = $u;
-        if ($u->code_sent != 'Yes') {
-            $code = rand(100000, 999999);
-            $message = "Your EAAACA 2FA code is $code";
-            if (strlen($u->email) < 5) {
-                $u->email = $receiver->username;
-            }
-            if (strlen($u->email) < 5) {
-                die("email not found");
-            }
-            $data['email'] = $receiver->email;
-            $data['name'] = $receiver->name;
-            $data['subject'] = 'EAAACA 2FA Code';
-            $data['body'] = $message;
-            $data['view'] = 'mail';
-            $data['data'] = $message;
-            try {
-                Utils::mail_sender($data);
-                $u->code = $code;
-                $u->code_sent = 'Yes';
-                $u->code_verified = 'No';
-                $u->save();
-            } catch (\Throwable $th) {
-                $u->code_sent = 'No';
-                $u->code_verified = 'No';
-                //$u->save();
-                dd($th->getMessage());
-                return;
-            }
-            $pending_url = url('2fa');
-            die("<script>location.href='$pending_url';</script>");
-            return;
-        }
+// ── Two-Factor Authentication ────────────────────────────
+Route::get('/2fa',          [TwoFactorController::class, 'show'])->name('2fa.show');
+Route::post('/2fa',         [TwoFactorController::class, 'verify'])->name('2fa.verify');
+Route::get('/resend-code',  [TwoFactorController::class, 'resend'])->name('2fa.resend');
 
-        if ($u->code_verified != 'Yes') {
-            $pending_url = url('2fa');
-            die("<script>location.href='$pending_url';</script>");
-            return;
-        }
-
-        if ($u->status != 1) {
-            $pending_url = url('pending');
-            die("<script>location.href='$pending_url';</script>");
-            return;
-        }
-    }
-});
-
+// ── Misc ─────────────────────────────────────────────────
 Route::get('/gen-form', function () {
     die(Gen::find($_GET['id'])->make_forms());
 })->name("gen-form");
@@ -75,26 +24,6 @@ Route::get('/gen-form', function () {
 Route::get('generate-class', [MainController::class, 'generate_class']);
 Route::get('auth/register', [MainController::class, 'register'])->name('form');
 Route::get('pending', [MainController::class, 'pending'])->name('pending');
-Route::get('2fa', [MainController::class, 'two_fa']);
-Route::post('2fa', function () {
-    $u = Admin::user();
-    if ($u == null) {
-        die("user not found");
-    }
-    $u = User::find($u->id);
-    if ($u == null) {
-        die("user not found");
-    }
-    if ($u->code != $_POST['code']) {
-        $url = url('2fa?error=1');
-        die("<script>location.href='$url';</script>");
-    }
-    $u->code_sent = 'Yes';
-    $u->code_verified = 'Yes';
-    $u->save();
-    $url = admin_url();
-    die("<script>location.href='$url';</script>");
-});
 
 Route::get('/gen', function () {
     die(Gen::find($_GET['id'])->do_get());

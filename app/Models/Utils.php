@@ -40,16 +40,14 @@ class Utils extends Model
     //mail sender
     public static function mail_sender($data)
     {
-        try {
-            Mail::send('mail', ['body' => $data['body'], 'title' => $data['subject']], function ($m) use ($data) {
-                $m->to($data['email'], $data['name'])
-                    ->subject($data['subject']);
-                $m->from('noreply@eaaaca.com', 'Dev@Team@2');
-            });
-        } catch (\Throwable $th) {
-            $msg = 'failed';
-            throw $th;
-        }
+        $fromAddress = config('mail.from.address', 'info@eaaaca.com');
+        $fromName    = config('mail.from.name', 'ARIN-EA');
+
+        Mail::send('mail', ['body' => $data['body'], 'title' => $data['subject']], function ($m) use ($data, $fromAddress, $fromName) {
+            $m->to($data['email'], $data['name'])
+                ->subject($data['subject']);
+            $m->from($fromAddress, $fromName);
+        });
     }
 
     //static php fuction that greets the user according to the time of the day

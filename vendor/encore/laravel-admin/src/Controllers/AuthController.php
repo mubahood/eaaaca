@@ -289,9 +289,12 @@ class AuthController extends Controller
      */
     public function getLogout(Request $request)
     {
+        \App\Http\Middleware\TwoFactorMiddleware::clearSession();
+
         $this->guard()->logout();
 
         $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return redirect(config('admin.route.prefix'));
     }
@@ -484,10 +487,16 @@ class AuthController extends Controller
      */
     protected function sendLoginResponse(Request $request)
     {
-        admin_toastr(trans('admin.login_successful'));
-
         $request->session()->regenerate();
 
+        // Send 2FA code immediately after login and redirect to verification page
+        $user = $this->guard()->user();
+        if ($user !== null) {
+            \App\Http\Middleware\TwoFactorMiddleware::sendCode($user);
+            return redirect(url('2fa'));
+        }
+
+        admin_toastr(trans('admin.login_successful'));
         return redirect()->intended($this->redirectPath());
     }
 
